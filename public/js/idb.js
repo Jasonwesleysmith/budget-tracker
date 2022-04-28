@@ -11,7 +11,7 @@ request.onsuccess = function (event) {
     db = event.target.result;
 
     if (navigator.onLine) {
-        uploadPizza();
+        uploadBudget();
     }
 };
 
@@ -33,7 +33,7 @@ function uploadBudget() {
 
     const transaction = db.transaction(['pending'], 'readwrite');
 
-    const pizzaObjectStore = transaction.objectStore('pending');
+    const budgetObjectStore = transaction.objectStore('pending');
 
     const getAll = budgetObjectStore.getAll();
     getAll.onsuccess = function () {
@@ -54,7 +54,7 @@ function uploadBudget() {
                     }
 
                     const transaction = db.transaction(['pending'], 'readwrite');
-                    const pizzaObjectStore = transaction.objectStore('pending');
+                    const budgetObjectStore = transaction.objectStore('pending');
 
                     budgetObjectStore.clear();
                 })
