@@ -1,73 +1,71 @@
-// functions to save to database, on upgraded, on success on error
 let db;
 const request = indexedDB.open('budget', 1);
 
-request.onupgradeneeded = function(event) {
+request.onupgradeneeded = function (event) {
     const db = event.target.result;
     db.createObjectStore('pending', { autoIncrement: true });
-  };
+};
 
-  request.onsuccess = function(event) {
-   
+request.onsuccess = function (event) {
+
     db = event.target.result;
-  
+
     if (navigator.onLine) {
-      uploadPizza();
+        uploadPizza();
     }
-  };
+};
 
-  request.onerror = function(event) {
-    // log error here
+request.onerror = function (event) {
+
     console.log(event.target.errorCode);
-  };
+};
 
-  function saveRecord(record) {
+function saveRecord(record) {
     const transaction = db.transaction(['pending'], 'readwrite');
-  
+
     const budgetObjectStore = transaction.objectStore('pending');
-  
-    // add record to your store with add method.
+
+
     budgetObjectStore.add(record);
-  }
+}
 
-  function uploadBudget() {
-    
+function uploadBudget() {
+
     const transaction = db.transaction(['pending'], 'readwrite');
-  
+
     const pizzaObjectStore = transaction.objectStore('pending');
-  
+
     const getAll = budgetObjectStore.getAll();
-    getAll.onsuccess = function() {
-        // if there was data in indexedDb's store, let's send it to the api server
+    getAll.onsuccess = function () {
+
         if (getAll.result.length > 0) {
-          fetch('/api/transaction/bulk', {
-            method: 'POST',
-            body: JSON.stringify(getAll.result),
-            headers: {
-              Accept: 'application/json, text/plain, */*',
-              'Content-Type': 'application/json'
-            }
-          })
-            .then(response => response.json())
-            .then(serverResponse => {
-              if (serverResponse.message) {
-                throw new Error(serverResponse);
-              }
-    
-              const transaction = db.transaction(['pending'], 'readwrite');
-              const pizzaObjectStore = transaction.objectStore('pending');
-              // clear all items in your store
-              budgetObjectStore.clear();
+            fetch('/api/transaction/bulk', {
+                method: 'POST',
+                body: JSON.stringify(getAll.result),
+                headers: {
+                    Accept: 'application/json, text/plain, */*',
+                    'Content-Type': 'application/json'
+                }
             })
-            .catch(err => {
-              // set reference to redirect back here
-              console.log(err);
-            });
+                .then(response => response.json())
+                .then(serverResponse => {
+                    if (serverResponse.message) {
+                        throw new Error(serverResponse);
+                    }
+
+                    const transaction = db.transaction(['pending'], 'readwrite');
+                    const pizzaObjectStore = transaction.objectStore('pending');
+
+                    budgetObjectStore.clear();
+                })
+                .catch(err => {
+
+                    console.log(err);
+                });
         }
-      };
-  }
+    };
+}
 
-  window.addEventListener('online', uploadBudget);
+window.addEventListener('online', uploadBudget);
 
 
-  
