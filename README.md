@@ -1,8 +1,8 @@
-# budget-tracker
+# Budget-tracker
 
 ## Description: A weather app utilizing server side One Call API
 
-# TECHNOLOGIES utilized: JavaScript, Express, MongoDB, Mongoose, Morgan
+# Technologies utilized: JavaScript, Express, MongoDB, Mongoose, Morgan
 
 ## Created a manifest.json to notify users device of what is being installed and how it should look.
 ## Added indexedDB to allow for offline functionality
